@@ -55,15 +55,15 @@ add_compile_options(-g -Wall)
 #target_compile_options(${PROJECT_NAME} PUBLIC -g -Wall)
 
 # Optimizations
-set(FOO_FOOT_DEBUG_FLAGS   -O0)
-set(FOO_FOOT_RELEASE_FLAGS -O3 -ffast-math -march=native)
+set(FOO_OPT_DEBUG_FLAGS   -O0)
+set(FOO_OPT_RELEASE_FLAGS -O3 -ffast-math -march=native)
 #if(GNU)
-	#list(APPEND FOO_FOOT_RELEASE_FLAGS -ftree-vectorize)
+	#list(APPEND FOO_OPT_RELEASE_FLAGS -ftree-vectorize)
 #endif()
-add_compile_options("$<$<CONFIG:DEBUG>:${FOO_FOOT_DEBUG_FLAGS}>")
-add_compile_options("$<$<CONFIG:RELEASE>:${FOO_FOOT_RELEASE_FLAGS}>")
-#target_compile_options(${PROJECT_NAME} PUBLIC "$<$<CONFIG:DEBUG>:${FOO_FOOT_DEBUG_FLAGS}>")
-#target_compile_options(${PROJECT_NAME} PUBLIC "$<$<CONFIG:RELEASE>:${FOO_FOOT_RELEASE_FLAGS}>")
+add_compile_options("$<$<CONFIG:DEBUG>:${FOO_OPT_DEBUG_FLAGS}>")
+add_compile_options("$<$<CONFIG:RELEASE>:${FOO_OPT_RELEASE_FLAGS}>")
+#target_compile_options(${PROJECT_NAME} PUBLIC "$<$<CONFIG:DEBUG>:${FOO_OPT_DEBUG_FLAGS}>")
+#target_compile_options(${PROJECT_NAME} PUBLIC "$<$<CONFIG:RELEASE>:${FOO_OPT_RELEASE_FLAGS}>")
 
 
 #############
