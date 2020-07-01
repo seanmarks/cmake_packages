@@ -30,7 +30,7 @@ setIfUnset(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}/lib")
 #######################################
 
 # Output names
-set(LIB_FOO "libfoo" CACHE STRING "Name of the library to be created")
+set(LIB_FOO    "foo" CACHE STRING "Name of the library to be created")
 set(FOO_DRIVER "${PROJECT_NAME}" CACHE STRING "Name of the executable")
 
 

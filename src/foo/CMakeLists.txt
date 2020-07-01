@@ -7,7 +7,8 @@
 file(GLOB_RECURSE LIB_FOO_SRC "${CMAKE_CURRENT_LIST_DIR}/*.cpp" "${CMAKE_CURRENT_LIST_DIR}/*.h")
 
 # Declare libraries
-add_library(${LIB_FOO} OBJECT ${LIB_FOO_SRC})
+add_library(${LIB_FOO} ${LIB_FOO_SRC})
+#add_library(${LIB_FOO} OBJECT ${LIB_FOO_SRC})
 
 # Where the libraries should be installed
 install(
