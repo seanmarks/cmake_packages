@@ -10,7 +10,8 @@ file(GLOB_RECURSE LIB_FOO_SRC      "${CMAKE_CURRENT_LIST_DIR}/*.cpp" "${CMAKE_CU
 file(GLOB_RECURSE LIB_FOO_INCLUDES "${CMAKE_CURRENT_LIST_DIR}/*.h")
 
 # Declare library
-add_library(${LIB_FOO} ${LIB_FOO_SRC})
+add_library(${LIB_FOO} "")
+target_sources(${LIB_FOO} PRIVATE ${LIB_FOO_SRC})
 #add_library(${LIB_FOO} OBJECT ${LIB_FOO_SRC})
 
 #include(GNUInstallDirs)
@@ -21,7 +22,8 @@ set(CMAKE_INCLUDE_CURRENT_DIR_IN_INTERFACE ON)
 # FIXME
 set(${PROJECT_NAME}_VERSION 3.4.1)
 
-# Not recommended in modern CMake?
+# Export header
+# - TODO: Not recommended in modern CMake?
 include(GenerateExportHeader)
 generate_export_header(${LIB_FOO})
 
@@ -33,21 +35,30 @@ set_property(TARGET ${LIB_FOO} APPEND PROPERTY
   COMPATIBLE_INTERFACE_STRING ${LIB_FOO}_MAJOR_VERSION
 )
 
-install(TARGETS ${LIB_FOO} EXPORT ${LIB_FOO}Targets
+# Install library
+install(TARGETS ${LIB_FOO}
+	EXPORT ${LIB_FOO}Targets
   LIBRARY DESTINATION lib
   ARCHIVE DESTINATION lib
   RUNTIME DESTINATION bin
   INCLUDES DESTINATION include
 )
+
+# Install headers
 install(
   FILES
-    Foo.h
+    ${LIB_FOO_INCLUDES}
   DESTINATION
     include
   COMPONENT
     Devel
 )
 #    "${CMAKE_CURRENT_BINARY_DIR}/climbingstats_export.h"
+
+
+######################
+### Package Config ###
+######################
 
 include(CMakePackageConfigHelpers)
 write_basic_package_version_file(
@@ -65,7 +76,10 @@ configure_file(cmake/${LIB_FOO}Config.cmake
   COPYONLY
 )
 
+# Install package files
 set(ConfigPackageLocation lib/cmake/${LIB_FOO})
+# - Targets
+#   - Note: keyword is usually FILES, but install(EXPORT) is special (?)
 install(EXPORT ${LIB_FOO}Targets
   FILE
     ${LIB_FOO}Targets.cmake
@@ -74,6 +88,7 @@ install(EXPORT ${LIB_FOO}Targets
   DESTINATION
     ${ConfigPackageLocation}
 )
+# - Version config file
 install(
   FILES
     cmake/${LIB_FOO}Config.cmake

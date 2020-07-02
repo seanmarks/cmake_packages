@@ -1,10 +1,11 @@
 # Add the executable
-add_executable(${FOO_DRIVER}-bin main.cpp)
-target_link_libraries(${FOO_DRIVER}-bin PUBLIC ${LIB_FOO})
-target_include_directories(${FOO_DRIVER}-bin PUBLIC ${CMAKE_SOURCE_DIR}/src)
+# - Use a special name for the driver's CMake target, since the driver's final name
+#   may be the same as the library
+set(FOO_DRIVER_TARGET "${FOO_DRIVER}-bin")
+add_executable(${FOO_DRIVER_TARGET} main.cpp)
+target_link_libraries(${FOO_DRIVER_TARGET} PUBLIC ${LIB_FOO})
+target_include_directories(${FOO_DRIVER_TARGET} PUBLIC ${CMAKE_SOURCE_DIR}/src)
+set_target_properties(${FOO_DRIVER_TARGET} PROPERTIES OUTPUT_NAME ${FOO_DRIVER})
 
-# Allows the final name of the executable to be different than the target name
-set_target_properties(${FOO_DRIVER}-bin PROPERTIES OUTPUT_NAME ${FOO_DRIVER})
-
-# Install rules
-install(TARGETS ${FOO_DRIVER}-bin DESTINATION bin)
+# Install
+install(TARGETS ${FOO_DRIVER_TARGET} DESTINATION bin)
