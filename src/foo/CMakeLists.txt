@@ -13,10 +13,6 @@ file(GLOB_RECURSE LIB_FOO_INCLUDES "${CMAKE_CURRENT_LIST_DIR}/*.h")
 add_library(${LIB_FOO} ${LIB_FOO_SRC})
 #add_library(${LIB_FOO} OBJECT ${LIB_FOO_SRC})
 
-# Not suggested in modern CMake?
-#include(GenerateExportHeader)
-#generate_export_header(${LIB_FOO})
-
 #include(GNUInstallDirs)
 
 set(CMAKE_INCLUDE_CURRENT_DIR              ON)
@@ -25,9 +21,10 @@ set(CMAKE_INCLUDE_CURRENT_DIR_IN_INTERFACE ON)
 # FIXME
 set(${PROJECT_NAME}_VERSION 3.4.1)
 
+# Not recommended in modern CMake?
 include(GenerateExportHeader)
-
 generate_export_header(${LIB_FOO})
+
 set_property(TARGET ${LIB_FOO} PROPERTY VERSION ${${PROJECT_NAME}_VERSION})
 set_property(TARGET ${LIB_FOO} PROPERTY SOVERSION 3)
 set_property(TARGET ${LIB_FOO} PROPERTY
