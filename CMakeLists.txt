@@ -20,9 +20,9 @@ set(CMAKE_VERBOSE_MAKEFILE ON)
 
 # Put all binaries and libraries into subdirectories, instead of the main 'build' directory
 # - Adapted from CMake tutorial (v3.15)
-setIfUnset(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}/bin")
-setIfUnset(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}/lib")
-setIfUnset(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}/lib")
+#setIfUnset(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}/bin")
+#setIfUnset(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}/lib")
+#setIfUnset(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}/lib")
 
 
 #######################################
@@ -38,13 +38,19 @@ set(FOO_DRIVER "${PROJECT_NAME}" CACHE STRING "Name of the executable")
 ### Libraries ###
 #################
 
-# TODO: function for finding libraries specified via command line
-# - Generalize to finding static and shared versions
-# - Use 'target_link_libraries' and 'target_include_directories' instead
-#   for finer-grained control?
-
-### xdrfile ###
-
+# xdrfile
+set(xdrfile_ENABLED            ON)
+set(xdrfile_PREFER_STATIC_LIBS ON)
+if(xdrfile_ENABLED)
+	find_package(xdrfile CONFIG)
+	if(xdrfile_FOUND)
+		# Print the location of the library found
+		message(STATUS "xdrfile library: ${xdrfile_LIBRARIES}")
+	else()
+		# Set to disabled
+		set(xdrfile_ENABLED OFF)
+	endif()
+endif()
 
 ######################
 ### Compiler Flags ###
@@ -52,18 +58,10 @@ set(FOO_DRIVER "${PROJECT_NAME}" CACHE STRING "Name of the executable")
 
 # Basic flags
 add_compile_options(-g -Wall)
-#target_compile_options(${PROJECT_NAME} PUBLIC -g -Wall)
 
 # Optimizations
 set(FOO_OPT_DEBUG_FLAGS   -O0)
 set(FOO_OPT_RELEASE_FLAGS -O3 -ffast-math -march=native)
-#if(GNU)
-	#list(APPEND FOO_OPT_RELEASE_FLAGS -ftree-vectorize)
-#endif()
-add_compile_options("$<$<CONFIG:DEBUG>:${FOO_OPT_DEBUG_FLAGS}>")
-add_compile_options("$<$<CONFIG:RELEASE>:${FOO_OPT_RELEASE_FLAGS}>")
-#target_compile_options(${PROJECT_NAME} PUBLIC "$<$<CONFIG:DEBUG>:${FOO_OPT_DEBUG_FLAGS}>")
-#target_compile_options(${PROJECT_NAME} PUBLIC "$<$<CONFIG:RELEASE>:${FOO_OPT_RELEASE_FLAGS}>")
 
 
 #############

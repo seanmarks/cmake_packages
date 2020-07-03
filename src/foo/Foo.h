@@ -3,6 +3,10 @@
 #ifndef FOO_H
 #define FOO_H
 
+#if xdrfile_ENABLED
+#include "xdrfile/xdrfile_xtc.h"
+#endif
+
 class Foo
 {
  public:
