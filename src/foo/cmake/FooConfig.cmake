@@ -1,7 +1,6 @@
-# Include created targets file
-include("${CMAKE_CURRENT_LIST_DIR}/FooTargets.cmake")
+# TODO: test the identification of dependencies
+include(CMakeFindDependencyMacro)
+#find_dependency(xdrfile)
 
-# Public headers
-#get_filename_component(SELF_DIR "${CMAKE_CURRENT_LIST_FILE}" PATH)
-#get_filename_component(Foo_INCLUDE_DIRS "${SELF_DIR}/../../../include" ABSOLUTE)
-#include(${SELF_DIR}/mylib-targets.cmake)
+# Include file with export set
+include("${CMAKE_CURRENT_LIST_DIR}/FooTargets.cmake")

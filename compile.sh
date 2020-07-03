@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -eE
 
 export CC=gcc
 export CXX=g++
@@ -20,4 +20,4 @@ cmake .. \
 
 ### Build ###
 
-make
+make && make install

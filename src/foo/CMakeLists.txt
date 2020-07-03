@@ -1,117 +1,96 @@
 ### LIB_FOO ###
 
-# Builds main library: ${LIB_FOO}
-# - TODO: Build both SHARED and OBJECT libraries
-
-# Locate source files
-# - All source files
-
-# - Headers to publish
-set(LIB_FOO_INCLUDES "")
-list(APPEND LIB_FOO_INCLUDES "Foo.h")
-#file(GLOB_RECURSE LIB_FOO_INCLUDES "${CMAKE_CURRENT_LIST_DIR}/*.h")
+# Standard install locations
+include(GNUInstallDirs)
 
 # Declare library
 add_library(${LIB_FOO} OBJECT "")
-target_sources(${LIB_FOO} PRIVATE "Foo.cpp")
 
-# TODO
-#include(GNUInstallDirs)
+# Add source files
+target_sources(${LIB_FOO} PRIVATE Foo.cpp)
+target_sources(${LIB_FOO} PRIVATE Foo.h FooPrivateHeader.h)
 
-# FIXME
+# Headers to publish
+set(LIB_FOO_INCLUDES "")
+list(APPEND LIB_FOO_INCLUDES Foo.h)
+#file(GLOB_RECURSE LIB_FOO_INCLUDES "${CMAKE_CURRENT_LIST_DIR}/*.h")
+
 # Testing headers for public interface
 target_include_directories(${LIB_FOO} PUBLIC
 	$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
- 	$<INSTALL_INTERFACE:include>
-)
+ 	$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
+	)
+# Also may be useful:
+#$<BUILD_INTERFACE:${${LIB_FOO}_BINARY_DIR}>  # for processed config.h
+#$<BUILD_INTERFACE:${${LIB_FOO}_SOURCE_DIR}>
 
-# FIXME
-get_target_property(interface_dirs ${LIB_FOO} INCLUDE_DIRECTORIES)
-message(STATUS "DEBUG: ${LIB_FOO}.INCLUDE_DIRECTORIES           = ${interface_dirs}")
-get_target_property(interface_dirs ${LIB_FOO} INTERFACE_INCLUDE_DIRECTORIES)
-message(STATUS "DEBUG: ${LIB_FOO}.INTERFACE_INCLUDE_DIRECTORIES = ${interface_dirs}")
+# The following may be useful at some point
+#set(CMAKE_INCLUDE_CURRENT_DIR              ON)
+#set(CMAKE_INCLUDE_CURRENT_DIR_IN_INTERFACE ON)
 
-
-set(CMAKE_INCLUDE_CURRENT_DIR              ON)
-set(CMAKE_INCLUDE_CURRENT_DIR_IN_INTERFACE ON)
-
-# FIXME
-set(${PROJECT_NAME}_VERSION 3.4.1)
-
-# Export header
-# - TODO: Not recommended in modern CMake?
-#include(GenerateExportHeader)
-#generate_export_header(${LIB_FOO})
-
-set_property(TARGET ${LIB_FOO} PROPERTY VERSION ${${PROJECT_NAME}_VERSION})
-set_property(TARGET ${LIB_FOO} PROPERTY SOVERSION 3)
-set_property(TARGET ${LIB_FOO} PROPERTY
-  INTERFACE_${LIB_FOO}_MAJOR_VERSION 3)
-set_property(TARGET ${LIB_FOO} APPEND PROPERTY
-  COMPATIBLE_INTERFACE_STRING ${LIB_FOO}_MAJOR_VERSION
-)
+# TODO: Library version stuff
+set(LIB_FOO_VERSION 0.0.0)
+set_property(TARGET ${LIB_FOO} PROPERTY VERSION ${LIB_FOO_VERSION})
+set_property(TARGET ${LIB_FOO} PROPERTY SOVERSION 0)
+set_property(TARGET ${LIB_FOO} PROPERTY INTERFACE_${LIB_FOO}_MAJOR_VERSION 0)
+set_property(TARGET ${LIB_FOO}
+	APPEND PROPERTY COMPATIBLE_INTERFACE_STRING ${LIB_FOO}_MAJOR_VERSION
+	)
 
 # Install library
+# - Add to standard export set using EXPORT
 install(TARGETS ${LIB_FOO}
 	EXPORT ${LIB_FOO}Targets
-  LIBRARY DESTINATION lib
-  ARCHIVE DESTINATION lib
-  RUNTIME DESTINATION bin
-	OBJECTS DESTINATION lib
-  INCLUDES DESTINATION include
-)
+  RUNTIME  DESTINATION ${CMAKE_INSTALL_BINDIR}
+  INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+  LIBRARY  DESTINATION ${CMAKE_INSTALL_LIBDIR}
+  ARCHIVE  DESTINATION ${CMAKE_INSTALL_LIBDIR}
+	OBJECTS  DESTINATION ${CMAKE_INSTALL_LIBDIR}
+	)
 
-# Install headers
+# Install public headers
 install(
   FILES
     ${LIB_FOO_INCLUDES}
   DESTINATION
-    include/${PROJECT_NAME}
+    ${CMAKE_INSTALL_INCLUDEDIR}/${LIB_FOO}
   COMPONENT
     Devel
-)
-#    "${CMAKE_CURRENT_BINARY_DIR}/climbingstats_export.h"
-
-# FIXME
-#target_include_directories(${LIB_FOO} INTERFACE
-#  # Ok, relocatable:
-#  $<INSTALL_INTERFACE:include/${PROJECT_NAME}>
-#)
+	)
 
 
-######################
-### Package Config ###
-######################
+#########################
+### Library Interface ###
+#########################
 
-include(CMakePackageConfigHelpers)
-write_basic_package_version_file(
-  "${CMAKE_CURRENT_BINARY_DIR}/${LIB_FOO}/${LIB_FOO}ConfigVersion.cmake"
-  VERSION ${${PROJECT_NAME}_VERSION}
-  COMPATIBILITY AnyNewerVersion
-)
+set(ConfigPackageLocation ${CMAKE_INSTALL_LIBDIR}/cmake/${LIB_FOO})
 
-export(EXPORT ${LIB_FOO}Targets
-  FILE "${CMAKE_CURRENT_BINARY_DIR}/${LIB_FOO}/${LIB_FOO}Targets.cmake"
-  NAMESPACE ${PROJECT_NAME}::
-)
+# Install the export set
+# - Targets
+#   - Note: keyword is usually FILES, but install(EXPORT) is special and uses FILE (?)
+install(EXPORT ${LIB_FOO}Targets
+  FILE        ${LIB_FOO}Targets.cmake
+  NAMESPACE   ${LIB_FOO}::
+  DESTINATION ${ConfigPackageLocation}
+	)
+
+# Main configuration file
 configure_file(cmake/${LIB_FOO}Config.cmake
   "${CMAKE_CURRENT_BINARY_DIR}/${LIB_FOO}/${LIB_FOO}Config.cmake"
   COPYONLY
-)
+	)
 
-# Install package files
-set(ConfigPackageLocation lib/cmake/${LIB_FOO})
-# - Targets
-#   - Note: keyword is usually FILES, but install(EXPORT) is special (?)
-install(EXPORT ${LIB_FOO}Targets
-  FILE
-    ${LIB_FOO}Targets.cmake
-  NAMESPACE
-    ${PROJECT_NAME}::
-  DESTINATION
-    ${ConfigPackageLocation}
-)
-# - Version config file
+# Version configuration file
+# - Helps with checking for compatible versions
+include(CMakePackageConfigHelpers)
+write_basic_package_version_file(
+  "${CMAKE_CURRENT_BINARY_DIR}/${LIB_FOO}/${LIB_FOO}ConfigVersion.cmake"
+  VERSION ${LIB_FOO_VERSION}
+  COMPATIBILITY AnyNewerVersion
+	)
+	# alternative:  COMPATIBILITY SameMajorVersion
+
+# Install configuration files
 install(
   FILES
     cmake/${LIB_FOO}Config.cmake
@@ -120,4 +99,4 @@ install(
     ${ConfigPackageLocation}
   COMPONENT
     Devel
-)
+	)
