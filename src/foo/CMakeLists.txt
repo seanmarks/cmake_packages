@@ -5,16 +5,32 @@
 
 # Locate source files
 # - All source files
-file(GLOB_RECURSE LIB_FOO_SRC      "${CMAKE_CURRENT_LIST_DIR}/*.cpp" "${CMAKE_CURRENT_LIST_DIR}/*.h")
+
 # - Headers to publish
-file(GLOB_RECURSE LIB_FOO_INCLUDES "${CMAKE_CURRENT_LIST_DIR}/*.h")
+set(LIB_FOO_INCLUDES "")
+list(APPEND LIB_FOO_INCLUDES "Foo.h")
+#file(GLOB_RECURSE LIB_FOO_INCLUDES "${CMAKE_CURRENT_LIST_DIR}/*.h")
 
 # Declare library
-add_library(${LIB_FOO} "")
-target_sources(${LIB_FOO} PRIVATE ${LIB_FOO_SRC})
-#add_library(${LIB_FOO} OBJECT ${LIB_FOO_SRC})
+add_library(${LIB_FOO} OBJECT "")
+target_sources(${LIB_FOO} PRIVATE "Foo.cpp")
 
+# TODO
 #include(GNUInstallDirs)
+
+# FIXME
+# Testing headers for public interface
+target_include_directories(${LIB_FOO} PUBLIC
+	$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
+ 	$<INSTALL_INTERFACE:include>
+)
+
+# FIXME
+get_target_property(interface_dirs ${LIB_FOO} INCLUDE_DIRECTORIES)
+message(STATUS "DEBUG: ${LIB_FOO}.INCLUDE_DIRECTORIES           = ${interface_dirs}")
+get_target_property(interface_dirs ${LIB_FOO} INTERFACE_INCLUDE_DIRECTORIES)
+message(STATUS "DEBUG: ${LIB_FOO}.INTERFACE_INCLUDE_DIRECTORIES = ${interface_dirs}")
+
 
 set(CMAKE_INCLUDE_CURRENT_DIR              ON)
 set(CMAKE_INCLUDE_CURRENT_DIR_IN_INTERFACE ON)
@@ -24,8 +40,8 @@ set(${PROJECT_NAME}_VERSION 3.4.1)
 
 # Export header
 # - TODO: Not recommended in modern CMake?
-include(GenerateExportHeader)
-generate_export_header(${LIB_FOO})
+#include(GenerateExportHeader)
+#generate_export_header(${LIB_FOO})
 
 set_property(TARGET ${LIB_FOO} PROPERTY VERSION ${${PROJECT_NAME}_VERSION})
 set_property(TARGET ${LIB_FOO} PROPERTY SOVERSION 3)
@@ -41,6 +57,7 @@ install(TARGETS ${LIB_FOO}
   LIBRARY DESTINATION lib
   ARCHIVE DESTINATION lib
   RUNTIME DESTINATION bin
+	OBJECTS DESTINATION lib
   INCLUDES DESTINATION include
 )
 
@@ -49,11 +66,17 @@ install(
   FILES
     ${LIB_FOO_INCLUDES}
   DESTINATION
-    include
+    include/${PROJECT_NAME}
   COMPONENT
     Devel
 )
 #    "${CMAKE_CURRENT_BINARY_DIR}/climbingstats_export.h"
+
+# FIXME
+#target_include_directories(${LIB_FOO} INTERFACE
+#  # Ok, relocatable:
+#  $<INSTALL_INTERFACE:include/${PROJECT_NAME}>
+#)
 
 
 ######################

@@ -1,4 +1,5 @@
 #include "Foo.h"
+#include "FooPrivateHeader.h"
 
 int Foo::doStuff() const
 {
