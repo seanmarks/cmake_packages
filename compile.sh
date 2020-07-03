@@ -5,6 +5,7 @@ export CXX=g++
 
 ############################################
 
+XDRFILE_DIR="${HOME}/programs/xdrfile/1.1.4"
 
 ### Configure ###
 
@@ -16,7 +17,8 @@ mkdir -p $build_dir
 # Configure from build directory
 cd $build_dir
 cmake .. \
-	-DCMAKE_INSTALL_PREFIX="${HOME}/programs/Foo"
+	-DCMAKE_INSTALL_PREFIX="${HOME}/programs/Foo" \
+	-DCMAKE_PREFIX_PATH="${XDRFILE_DIR}"
 
 ### Build ###
 

@@ -18,10 +18,10 @@ endif()
 
 # Look for xdrfile
 find_path(xdrfile_INCLUDE_DIR xdrfile/xdrfile_xtc.h
-	HINTS ${XDRFILE_DIR}
+	HINTS ${xdrfile_DIR}
 )
 find_library(xdrfile_LIBRARY xdrfile
-	HINTS ${XDRFILE_DIR}
+	HINTS ${xdrfile_DIR}
 	NAMES libxdrfile.a xdrfile.a
 )
 mark_as_advanced(xdrfile_INCLUDE_DIR xdrfile_LIBRARY)
