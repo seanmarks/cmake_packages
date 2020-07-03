@@ -4,7 +4,7 @@
 # - FindBoost.cmake (cmake 3.15)
 
 # Optionally, prefer static library
-if(xdrfile_PREFER_STATIC_LIBS)
+if(PREFER_STATIC_LIBS OR xdrfile_PREFER_STATIC_LIBS)
 	# Save CMake variable
 	set(_xdrfile_ORIG_CMAKE_FIND_LIBRARY_SUFFIXES ${CMAKE_FIND_LIBRARY_SUFFIXES})
 
@@ -32,21 +32,23 @@ find_package_handle_standard_args( xdrfile
 	REQUIRED_VARS xdrfile_INCLUDE_DIR xdrfile_LIBRARY
 	)
 
+if(xdrfile_FOUND)
+	# Important variables
+	set(xdrfile_LIBRARIES    ${xdrfile_LIBRARY})
+	set(xdrfile_INCLUDE_DIRS ${xdrfile_INCLUDE_DIR})
+endif()
+
 if(xdrfile_FOUND AND NOT TARGET xdrfile::xdrfile)
-	# Create a target under the appropriate "namespace"
-	add_library(xdrfile::xdrfile UNKNOWN IMPORTED)
+	# Create an imported target under the appropriate "namespace"
+	add_library(xdrfile::xdrfile UNKNOWN IMPORTED)  # TODO: UNKNOWN or INTERFACE?
 	set_target_properties(xdrfile::xdrfile PROPERTIES
-		IMPORTED_LINK_INTERFACE_LANGUAGES "C"
 		IMPORTED_LOCATION "${xdrfile_LIBRARY}"
 		INTERFACE_INCLUDE_DIRECTORIES "${xdrfile_INCLUDE_DIR}"
 	)
+	#	IMPORTED_LINK_INTERFACE_LANGUAGES "C" # TODO
 endif()
 
-# Important variables
-set(xdrfile_LIBRARIES    ${xdrfile_LIBRARY})
-set(xdrfile_INCLUDE_DIRS ${xdrfile_INCLUDE_DIR})
-
 # Reset CMake variable
-if(xdrfile_PREFER_STATIC_LIBS)
+if(PREFER_STATIC_LIBS OR xdrfile_PREFER_STATIC_LIBS)
 	set(CMAKE_FIND_LIBRARY_SUFFIXES ${_xdrfile_ORIG_CMAKE_FIND_LIBRARY_SUFFIXES})
 endif()

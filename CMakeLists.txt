@@ -42,7 +42,11 @@ set(FOO_DRIVER "${PROJECT_NAME}" CACHE STRING "Name of the executable")
 set(xdrfile_ENABLED            ON)
 set(xdrfile_PREFER_STATIC_LIBS ON)
 if(xdrfile_ENABLED)
-	find_package(xdrfile CONFIG)
+	include(Findxdrfile)
+
+	# Note: CONFIG mode is not viable here because xdrfile does not provide a CMake
+	# config file
+	find_package(xdrfile)
 	if(xdrfile_FOUND)
 		# Print the location of the library found
 		message(STATUS "xdrfile library: ${xdrfile_LIBRARIES}")
@@ -51,6 +55,7 @@ if(xdrfile_ENABLED)
 		set(xdrfile_ENABLED OFF)
 	endif()
 endif()
+
 
 ######################
 ### Compiler Flags ###

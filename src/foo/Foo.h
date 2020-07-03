@@ -5,7 +5,7 @@
 
 #if xdrfile_ENABLED
 #include "xdrfile/xdrfile_xtc.h"
-#endif
+#endif // if xdrfile_ENABLED
 
 class Foo
 {
@@ -21,6 +21,10 @@ class Foo
 
  private:
 	int x_ = 0;
+
+#if xdrfile_ENABLED
+	XDRFILE* xdr_file_handle_;
+#endif // if xdrfile_ENABLED
 };
 
 #endif // ifndef FOO_H

@@ -20,7 +20,10 @@ list(APPEND LIB_FOO_INCLUDES Foo.h)
 if(xdrfile_ENABLED)
 	target_compile_definitions(${LIB_FOO} PUBLIC  HAVE_XDRFILE=1)
 	target_link_libraries(${LIB_FOO} PUBLIC xdrfile::xdrfile)
-	target_include_directories(${LIB_FOO} PRIVATE ${xdrfile_INCLUDE_DIRS})  # FIXME: should break
+
+	# FIXME: Should break if appropriate definitions aren't exported (?),
+	# namely HAVE_XDRFILE=1
+	target_include_directories(${LIB_FOO} PUBLIC ${xdrfile_INCLUDE_DIRS})
 endif()
 
 # Headers for public interface
